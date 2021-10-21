@@ -1,6 +1,4 @@
-//delete the student data from student table based on student no
-
-package com.nit.jdbc.assignment;
+package com.nit.jdbc;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
@@ -8,50 +6,59 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.Scanner;
 
-public class DeleteTest {
+public class UpdateTest {
 
 	public static void main(String[] args) {
 		Scanner scn = null;
 		Connection con = null;
 		Statement st = null;
+
 		try {
-			//read inputs
 			scn = new Scanner(System.in);
-			int no=0;
+			String newName=null,newAdd=null;
+			float newAvg=0.0f;
+			int no = 0;
 			if(scn!=null) {
+				System.out.print("Enter the name of the student : ");
+				newName=scn.next();
+				System.out.print("Enter the new address : ");
+				newAdd = scn.next();
+				System.out.print("Enter the new Avg : ");
+				newAvg = scn.nextFloat();
 				System.out.print("Enter the student no : ");
-				no=scn.nextInt();
-			}//if
-		
-			//register the jdbc driver
+				no = scn.nextInt();
+			}
+			//convert input values as required SQL query
+			newName = "'"+newName+"'";
+			newAdd = "'"+newAdd+"'";
+
+			//load JDBC driver
 			//Class.forName("oracle.jdbc.driver.OracleDriver");
-			
-			//create connection obj
+
+			//establish connection
 			con = DriverManager.getConnection("jdbc:oracle:thin:@localhost:1521:xe","IMIT","IMIT");
+
 			//create statement object
 			if(con!=null)
 				st = con.createStatement();
-			//prepare sql query
-			//delete from student where sno=101;
-			String query="DELETE FROM STUDENT WHERE SNO="+no;
-			
-			//send and execute sql query
+			//prepare SQL query
+			//String query = "update student set sname='avi',sadd='hyd',avg='43.5' where sno = 101 ";
+			String query = "UPDATE STUDENT SET SNAME="+newName+",SADD="+newAdd+",AVG="+newAvg+" WHERE SNO="+no;
+			System.out.println(query);
+
+			//send and execute query
 			int count=0;
 			if(st!=null)
 				count=st.executeUpdate(query);
-			
 			//process the result
 			if(count==0)
-				System.out.println("No records found to delete");
+				System.out.println("No record found to update");
 			else
-				System.out.println("no. of records are effected : "+count);
-		}//try
-		catch (SQLException se) {
-			//if(se.getErrorCode()>=900 && se.getErrorCode()<=999)
-				//System.out.println("Invalide col name or table name or sql Keywords");
+				System.out.println("no. of record affected : "+count);
+
+		} catch (SQLException se) {
 			se.printStackTrace();
-		}
-		catch(Exception e) {
+		} catch (Exception e) {
 			e.printStackTrace();
 		}
 		finally {
